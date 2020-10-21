@@ -14,6 +14,7 @@ const Map = () => {
   const [lat, setLat] = useState(34);
   const [zoom, setZoom] = useState(1.5);
   const MapboxDirections = window.MapboxDirections
+  const MapboxGeocoder = window.MapboxGeocoder
 
   
   useEffect(() => {
@@ -25,7 +26,8 @@ const Map = () => {
     });
 
     // Add navigation control (the +/- zoom buttons)
-    map.addControl(new mapboxgl.NavigationControl(), 'top-right');
+    map.addControl(new mapboxgl.NavigationControl(), 
+      'bottom-left');
 
     // Button for user location
     map.addControl(new mapboxgl.GeolocateControl({
@@ -33,15 +35,21 @@ const Map = () => {
           enableHighAccuracy: true
         },
         trackUserLocation: true
-      })
+      }), 'bottom-right'
     );
 
     // Display driving directions
     map.addControl(new MapboxDirections({
       accessToken: mapboxgl.accessToken
+    }), 'top-right'
+    );
+      
+    // Marker on searched location
+    map.addControl(new MapboxGeocoder({
+      accessToken: mapboxgl.accessToken,
+        mapboxgl: mapboxgl
     }), 'top-left'
     );
-
 
     // change cursor to pointer when hovers on feature
     map.on('mouseenter', e => {
@@ -55,7 +63,6 @@ const Map = () => {
       setLat(map.getCenter().lat.toFixed(4));
       setZoom(map.getZoom().toFixed(2));
     });
-
 
 
     // Clean up on unmount
